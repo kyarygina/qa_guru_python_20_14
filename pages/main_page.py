@@ -6,8 +6,6 @@ from selene.support.conditions import have
 class MainPage:
 
     def __init__(self):
-        # Кнопка "Найти"
-        self.filters_search_button = browser.all('a').element_by(have.text('Найти'))
 
         # Элементы на вкладке "Купить"
         self.buy_realty_type_dropdown = browser.element('button[title="Квартиру в новостройке и вторичке"]')
@@ -17,6 +15,9 @@ class MainPage:
         self.buy_realty_price_to_input = browser.element('input[placeholder="до"]')
         self.buy_realty_location_input = browser.element('input[placeholder="Город, адрес, метро, район, ж/д или шоссе"]')
         self.buy_realty_location = browser.element('[title="Сочи, Краснодарский край"]')
+        self.buy_realty_type_filled_filter = browser.element('button[title="Дом, дачу"]')
+        self.buy_realty_price_filled_filter = browser.element('button[title = "7 000 000 - 9 000 000 ₽"]')
+        self.buy_realty_location_filled_filter = browser.element('#geo-suggest-input')
 
         # Элементы на вкладке "Снять"
         self.rent_realty_tab = browser.all('a').element_by(have.text('Снять'))
@@ -25,19 +26,17 @@ class MainPage:
         self.rent_realty_price_to_input = browser.element('input[placeholder="до"]')
         self.rent_realty_location_input = browser.element('input[placeholder="Город, адрес, метро, район, ж/д, шоссе или ЖК"]')
         self.rent_realty_location = browser.element('span[title="Краснодар"]')
+        self.rent_realty_type_filled_filter = browser.element('button[title="Квартиру"]')
+        self.rent_realty_size_filled_filter = browser.element('button[title="1, 2 комн."]')
+        self.rent_realty_price_filled_filter = browser.element('button[title="20 000 - 30 000 ₽"]')
+        self.rent_realty_location_filled_filter = browser.element('#geo-suggest-input')
 
         # Элементы на вкладке "Посуточно"
         self.daily_rent_realty_tab = browser.all('a').element_by(have.text('Посуточно'))
         self.daily_rent_location_input = browser.element('input[placeholder="Куда вы хотите поехать?"]')
         self.daily_rent_realty_location = browser.element('span[title="Калининград"]')
-        self.daily_rent_calendar_button = browser.all('button[data-name="FilterButton"]').element_by(have.text('Заезд — Отъезд'))
-        self.daily_rent_body = browser.element('body')
-
-        # Элементы на вкладке "Построить"
-        self.build_realty_tab = browser.all('a').element_by(have.text('Построить'))
-
-        # Элементы на вкладке "Оценить"
-        self.estimate_realty_tab = browser.all('a').element_by(have.text('Оценить'))
+        self.daily_rent_realty_location_filled_filter = browser.element('#geo-suggest-input')
+        self.daily_rent_realty_type_filled_filter = browser.element('button[title="Квартиру"]')
 
         # Элементы на вкладке "Ипотека"
         self.mortgage_realty_tab = browser.all('ul[data-name="FiltersTabs"] a').element_by(have.text('Ипотека'))
@@ -50,13 +49,14 @@ class MainPage:
         self.mortgage_realty_location_input = browser.element('input[placeholder="Город"]')
         self.mortgage_realty_location = browser.all('span').element_by(have.text('Саратов'))
         self.mortgage_realty_right_button = browser.element('[data-mark="FiltersMortgageRightButton"]')
+        self.mortgage_realty_type_filled_filter = browser.all('button').element_by(have.text('Квартира в новостройке'))
+        self.mortgage_realty_price_filled_filter = browser.element('input[placeholder="Стоимость недвижимости"]')
+        self.mortgage_realty_down_payment_filled_filter = browser.element('input[placeholder="Первоначальный взнос"]')
+        self.mortgage_realty_term_filled_filter = browser.all('button').element_by(have.text('20 лет'))
 
         # Элементы на вкладке "Подбор риелтора"
         self.realtor_realty_tab = browser.all('a').element_by(have.text('Подбор риелтора'))
         self.realtor_question_tab = browser.element('div[data-name="CPDModalContainer"] span')
-
-        # Элементы на вкладке "Подать за 0 ₽"
-        self.zero_ruble_sell_realty_tab = browser.all('a').element_by(have.text('Подать за 0 ₽'))
 
     # Методы для вкладки "Купить"
 
@@ -82,7 +82,7 @@ class MainPage:
 
     @allure.step("Заполнить поле с ценой 'до'")
     def fill_buy_realty_price_to_input(self, value):
-        self.buy_realty_price_from_input.set_value(value)
+        self.buy_realty_price_to_input.set_value(value)
         return self
 
     @allure.step("Заполнить поле с локацией")
@@ -95,9 +95,11 @@ class MainPage:
         self.buy_realty_location.click()
         return self
 
-    @allure.step("Нажать на кнопку 'Найти'")
-    def click_filters_search_button(self):
-        self.filters_search_button.click()
+    @allure.step("Проверить наличие текста в заполненных фильтрах на вкладке 'Купить'")
+    def should_buy_realty_filters_have_text(self, realty_type, realty_price, realty_location):
+        self.buy_realty_type_filled_filter.should(have.text(realty_type))
+        self.buy_realty_price_filled_filter.should(have.text(realty_price))
+        self.buy_realty_location_filled_filter.should(have.value(realty_location))
         return self
 
     # Методы для вкладки "Снять"
@@ -132,6 +134,14 @@ class MainPage:
         self.rent_realty_location.click()
         return self
 
+    @allure.step("Проверить наличие текста в заполненных фильтрах на вкладке 'Снять'")
+    def should_rent_realty_filters_have_text(self, realty_type, realty_size, realty_price, realty_location):
+        self.rent_realty_type_filled_filter.should(have.text(realty_type))
+        self.rent_realty_size_filled_filter.should(have.text(realty_size))
+        self.rent_realty_price_filled_filter.should(have.text(realty_price))
+        self.rent_realty_location_filled_filter.should(have.value(realty_location))
+        return self
+
     # Методы для вкладки "Посуточно"
 
     @allure.step("Нажать на вкладку 'Посуточно'")
@@ -149,28 +159,9 @@ class MainPage:
         self.daily_rent_realty_location.click()
         return self
 
-    @allure.step("Нажать на дропдаун с календарем")
-    def click_daily_rent_calendar_button(self):
-        self.daily_rent_calendar_button.click()
-        return self
-
-    @allure.step("Закрыть календарь")
-    def click_daily_rent_body(self):
-        self.daily_rent_body.click()
-        return self
-
-    # Методы для вкладки "Построить"
-
-    @allure.step("Нажать на вкладку 'Построить'")
-    def click_build_realty_tab(self):
-        self.build_realty_tab.click()
-        return self
-
-    # Методы для вкладки "Оценить"
-
-    @allure.step("Нажать на вкладку 'Оценить'")
-    def click_estimate_realty_tab(self):
-        self.estimate_realty_tab.click()
+    @allure.step("Проверить наличие текста в заполненных фильтрах на вкладке 'Посуточно'")
+    def should_daily_rent_realty_filters_have_text(self, realty_location):
+        self.daily_rent_realty_location_filled_filter.should(have.value(realty_location))
         return self
 
     # Методы для вкладки "Ипотека"
@@ -210,19 +201,12 @@ class MainPage:
         self.mortgage_realty_term_from_list.click()
         return self
 
-    @allure.step("Заполнить поле с локацией")
-    def fill_mortgage_realty_location_input(self, value):
-        self.mortgage_realty_location_input.set_value(value)
-        return self
-
-    @allure.step("Выбрать локацию из выпадающего списка")
-    def click_mortgage_realty_location(self):
-        self.mortgage_realty_location.click()
-        return self
-
-    @allure.step("Нажать на кнопку 'Получить предложения банков'")
-    def click_mortgage_realty_right_button(self):
-        self.mortgage_realty_right_button.click()
+    @allure.step("Проверить наличие текста в заполненных фильтрах на вкладке 'Ипотека'")
+    def should_mortgage_realty_filters_have_text(self, realty_type, realty_price, realty_down_payment, realty_term):
+        self.mortgage_realty_type_filled_filter.should(have.text(realty_type))
+        self.mortgage_realty_price_filled_filter.should(have.value(realty_price))
+        self.mortgage_realty_down_payment_filled_filter.should(have.value(realty_down_payment))
+        self.mortgage_realty_term_filled_filter.should(have.text(realty_term))
         return self
 
     # Методы для вкладки "Подбор риелтора"
@@ -235,11 +219,4 @@ class MainPage:
     @allure.step("Проверить наличие текста в заголовке")
     def should_header_have_text(self,value):
         self.realtor_question_tab.should(have.text(value))
-        return self
-
-    # Методы для вкладки "Подать за 0 ₽"
-
-    @allure.step("Нажать на вкладку 'Подать за 0 ₽'")
-    def click_zero_ruble_sell_realty_tab(self):
-        self.zero_ruble_sell_realty_tab.click()
         return self
