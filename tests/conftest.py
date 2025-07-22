@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selene.support.shared import browser
-from tests.utils import attach
+from utils import attach
+
 
 @pytest.fixture(scope="session", autouse=True)
 def load_env():
@@ -30,7 +31,7 @@ def setup_browser():
      options.capabilities.update(selenoid_capabilities)
 
      driver = webdriver.Remote(
-         command_executor="https://{selenoid_login}:{selenoid_pass}@{selenoid_url}/wd/hub",
+         command_executor=f"https://{selenoid_login}:{selenoid_pass}@{selenoid_url}/wd/hub",
          options=options
      )
 
