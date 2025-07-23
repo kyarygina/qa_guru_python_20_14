@@ -20,15 +20,23 @@ selenoid_url = os.getenv("SELENOID_URL")
 def setup_browser():
      options = Options()
      options.add_argument("--incognito")
-     selenoid_capabilities = {
+
+     capabilities = {
          "browserName": "chrome",
          "browserVersion": "128.0",
          "selenoid:options": {
              "enableVNC": True,
-             "enableVideo": True
-         }
+             "enableVideo": True,
+             "enableLog": True
+         },
+        "goog:loggingPrefs": {
+            "browser": "ALL",
+            "driver": "ALL"
+        }
      }
-     options.capabilities.update(selenoid_capabilities)
+     options.capabilities.update(capabilities)
+     options.set_capability("selenoid:options", capabilities["selenoid:options"])
+     options.set_capability("goog:loggingPrefs", capabilities["goog:loggingPrefs"])
 
      driver = webdriver.Remote(
          command_executor=f"https://{selenoid_login}:{selenoid_pass}@{selenoid_url}/wd/hub",
