@@ -97,7 +97,7 @@ def test_mortgage_realty_tab_filters():
 @allure.severity(Severity.NORMAL)
 @allure.label("owner", "kyarygina")
 @allure.suite("Фильтры поиска на главной странице")
-@allure.title("Проверка фильтров на вкладке 'Подбор риелтора'")
+@allure.title("Проверка диалогового окна на вкладке 'Подбор риелтора'")
 @allure.link("https://www.cian.ru", name="Testing")
 def test_realtor_realty_tab_filters():
     with allure.step("Заполнить фильтры на вкладке 'Подбор риелтора'"):
